@@ -1,6 +1,7 @@
 package com.haschcode.pizza.model;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class Pizza {
 
@@ -10,6 +11,8 @@ public class Pizza {
     private int minIngredientSlice;
 
     private HashMap<Integer, Boolean> mapIngredient;
+
+    private List<Slice> sliceList;
 
     public Pizza(int maxColumn, int maxRows, int maxCellsSlice, int minIngredientSlice, HashMap<Integer, Boolean> mapIngredient) {
         this.maxColumn = maxColumn;
@@ -40,6 +43,22 @@ public class Pizza {
 
     public HashMap<Integer, Boolean> getMapIngredient() {
         return mapIngredient;
+    }
+
+    public Boolean getIngredient(Integer pos) {
+        return mapIngredient.get(pos);
+    }
+
+    public Boolean getIngredient(Integer y, Integer x) {
+        return mapIngredient.get(y*maxColumn+x);
+    }
+
+    public Integer getXpos(Integer i){
+        return i%maxColumn;
+    }
+
+    public Integer getYpos(Integer i){
+        return i/maxColumn;
     }
 
     @Override

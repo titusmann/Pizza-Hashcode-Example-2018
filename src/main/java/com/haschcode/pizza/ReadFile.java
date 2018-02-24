@@ -27,12 +27,12 @@ public class ReadFile {
         FileReader f = new FileReader(file);
         BufferedReader b = new BufferedReader(f);
         while((cadena = b.readLine())!=null) {
-            System.out.println(cadena);
+            //System.out.println(cadena);
             if (cont == -1) {
-                maxColumn = Integer.parseInt(cadena.split(" ")[0]);
-                maxRows = Integer.parseInt(cadena.split(" ")[1]);
-                maxCellsSlice = Integer.parseInt(cadena.split(" ")[2]);
-                minIngredientSlice = Integer.parseInt(cadena.split(" ")[3]);
+                maxRows = Integer.parseInt(cadena.split(" ")[0]);
+                maxColumn = Integer.parseInt(cadena.split(" ")[1]);
+                minIngredientSlice = Integer.parseInt(cadena.split(" ")[2]);
+                maxCellsSlice = Integer.parseInt(cadena.split(" ")[3]);
             } else {
                 Arrays.stream(cadena.split("")).forEach(i -> ingredients.put(row.getAndIncrement(), i.equals("T")));
             }

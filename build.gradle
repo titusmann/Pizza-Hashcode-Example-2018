@@ -1,14 +1,14 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 version = '1.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-apply plugin: 'application'
 
-mainClassName = 'main.java.com.haschcode.pizza.Main'
+mainClassName = 'com.haschcode.pizza.Main'
 
 repositories {
     mavenCentral()
@@ -18,4 +18,10 @@ repositories {
 jar {
     baseName = 'pizzaHaschode'
     version =  version
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': mainClassName
+        )
+    }
 }

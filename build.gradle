@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+version = '1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+apply plugin: 'application'
+
+mainClassName = 'main.java.com.haschcode.pizza.Main'
+
+repositories {
+    mavenCentral()
+}
+
+
+jar {
+    baseName = 'pizzaHaschode'
+    version =  version
+}

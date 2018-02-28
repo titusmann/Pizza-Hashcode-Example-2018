@@ -28,8 +28,8 @@ public class Slice {
         if (x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0) {
             return false;
         }
-        if (x1 >= pizza.getMaxRows() || x2 >= pizza.getMaxRows()
-            || y1 >= pizza.getMaxColumn() || y2 >= pizza.getMaxColumn()) {
+        if (x1 >= pizza.getMaxColumn() || x2 >= pizza.getMaxColumn()
+            || y1 >= pizza.getMaxRows() || y2 >= pizza.getMaxRows()) {
             return false;
         }
 

@@ -12,6 +12,8 @@ public class Pizza {
 
     private HashMap<Integer, Boolean> mapIngredient;
 
+    private HashMap<Integer, Integer> weightOfCells;
+
     private List<Slice> sliceList;
 
     public Pizza(int maxColumn, int maxRows, int maxCellsSlice, int minIngredientSlice, HashMap<Integer, Boolean> mapIngredient) {
@@ -20,6 +22,7 @@ public class Pizza {
         this.maxCellsSlice = maxCellsSlice;
         this.minIngredientSlice = minIngredientSlice;
         this.mapIngredient = mapIngredient;
+        this.weightOfCells = new HashMap<>();
     }
 
     public int getMaxColumn() {
@@ -70,5 +73,13 @@ public class Pizza {
                 ", minIngredientSlice=" + minIngredientSlice +
                 ", mapIngredient=" + mapIngredient +
                 '}';
+    }
+
+    public HashMap<Integer, Integer> getWeightOfCells() {
+        return weightOfCells;
+    }
+
+    public void setWeightOfCells(HashMap<Integer, Integer> weightOfCells) {
+        this.weightOfCells = weightOfCells;
     }
 }

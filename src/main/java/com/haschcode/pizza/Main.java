@@ -44,24 +44,18 @@ public class Main {
         for(int i = 0; i < size; i++) {
             Integer weight = weightOfCell(i);
             weightCells.put(i,weight);
-            System.out.println(weight);
+            //System.out.println(weight);
+        }
+        pizza.setWeightOfCells(weightCells);
+        // Realizar cortese
+
+
+        try {
+            WriteFile.imprimePesos(pizza);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-    }
-
-    public static Integer weightOfCell(Integer i){
-        Integer result = 0;
-
-        Integer coorx = pizza.getXpos(i);
-        Integer coory = pizza.getYpos(i);
-
-        for(String combinatoria : comb){
-            Integer xmax = Integer.parseInt(combinatoria.split("-")[0]);
-            Integer ymax = Integer.parseInt(combinatoria.split("-")[1]);
-
-            result += calcularCortes(xmax,ymax,coorx,coory);
-        }
-        return result;
     }
 
     public static List<String> combinaciones(){
@@ -85,6 +79,23 @@ public class Main {
 
         return result;
     }
+
+    public static Integer weightOfCell(Integer i){
+        Integer result = 0;
+
+        Integer coorx = pizza.getXpos(i);
+        Integer coory = pizza.getYpos(i);
+
+        for(String combinatoria : comb){
+            Integer xmax = Integer.parseInt(combinatoria.split("-")[0]);
+            Integer ymax = Integer.parseInt(combinatoria.split("-")[1]);
+
+            result += calcularCortes(xmax,ymax,coorx,coory);
+        }
+        return result;
+    }
+
+
 
     /**
      * Devuelve el peso con respecto a esa combinatoria.

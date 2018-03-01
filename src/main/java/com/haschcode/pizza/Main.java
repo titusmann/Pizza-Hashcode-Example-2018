@@ -4,9 +4,8 @@ import com.haschcode.pizza.model.Pizza;
 import com.haschcode.pizza.model.Slice;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.haschcode.pizza.Main.calcularCortes;
 
@@ -16,9 +15,14 @@ public class Main {
 
     public static Pizza pizza;
 
+    public static List<Slice> slices;
+
+    public static AtomicInteger contador = new AtomicInteger(0);
+
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        //System.out.println("Hello World!");
         pizza = null;
+        slices = new ArrayList<>();
 
         HashMap<Integer, Integer> weightCell = new HashMap<>();
         try {
@@ -37,21 +41,43 @@ public class Main {
             e.printStackTrace();
         }
 
-        System.out.println(pizza.toString());
+        //System.out.println(pizza.toString());
         HashMap<Integer, Integer> weightCells = new HashMap<>();
 
         long size = pizza.getMapIngredient().size();
-        for(int i = 0; i < size; i++) {
-            Integer weight = weightOfCell(i);
-            weightCells.put(i,weight);
-            //System.out.println(weight);
-        }
-        pizza.setWeightOfCells(weightCells);
-        // Realizar cortese
+        int posMenorPeso = -1;
+        do {
+            int menorPeso = 1000;
+            posMenorPeso = -1;
+            for (int i = 0; i < size; i++) {
+                Integer weight = weightOfCell(i);
+                weightCells.put(i, weight);
+                if (weight < menorPeso && weight > 0) {
+                    menorPeso = weight;
+                    posMenorPeso = i;
+                }
+                //System.out.println(weight);
+            }
+            pizza.setWeightOfCells(weightCells);
+
+            // - Seleccionar la celda con menor peso.
+            // - Seleccionar el corte mas grande.
+            // - En caso de haber mas de un corte, seleccionar el corte cuya suma de pesos sea menor.
+            Integer actualSize = 0;
+            for (String combi : comb) {
+                Integer xmax = Integer.parseInt(combi.split("-")[0]);
+                Integer ymax = Integer.parseInt(combi.split("-")[1]);
+
+                if (calcularCortes(xmax, ymax, pizza.getXpos(posMenorPeso), pizza.getYpos(posMenorPeso)) > 0) {
+                    //Esta combinatoria tiene cortes posibles. Se realiza el primero.
+                    realizarPrimerCorte(xmax, ymax, pizza.getXpos(posMenorPeso), pizza.getYpos(posMenorPeso));
+                }
+            }
+        } while (posMenorPeso != -1);
 
 
         try {
-            WriteFile.imprimePesos(pizza);
+            WriteFile.imprimeCortes(slices);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,12 +96,13 @@ public class Main {
             for (y = 1; y <= max; y++) {
                 if(x*y <= max && x*y >= min){
                     result.add(x+"-"+y);
-                    System.out.println(x+"-"+y);
+                    //System.out.println(x+"-"+y);
                 }
             }
         }
 
-        System.out.println(result.size());
+        Collections.sort(result, Comparator.comparingInt(c -> Integer.parseInt(c.split("-")[0]) * Integer.parseInt(c.split("-")[1])));
+        Collections.reverse(result);
 
         return result;
     }
@@ -117,5 +144,28 @@ public class Main {
             }
         }
         return resultado;
+    }
+
+    public static void realizarPrimerCorte(Integer avancex, Integer avancey, Integer coorx, Integer coory){
+        Integer resultado = 0;
+        Slice slice;
+        for(int x=0; x<avancex; x++) {
+            for(int y=0; y<avancey; y++) {
+                slice = new Slice(coorx-x, coory-y, coorx-x+(avancex-1), coory-y+(avancey-1));
+                if ( slice.validateSlice(pizza) ) {
+                    //Realizamos el corte.
+                    slices.add(slice);
+                    System.out.println("Cortecillo num: " + contador.getAndIncrement());
+
+                    //Anulamos las casillas.
+                    for(int x2 = coorx-x; x2 <= coorx-x+(avancex-1); x2++ ){
+                        for(int y2 = coory-y; y2 <= coory-y+(avancey-1); y2++ ){
+                            pizza.cutPizza(y2,x2);
+
+                        }
+                    }
+                }
+            }
+        }
     }
 }

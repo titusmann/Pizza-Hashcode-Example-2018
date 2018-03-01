@@ -56,6 +56,10 @@ public class Pizza {
         return mapIngredient.get(y*maxColumn+x);
     }
 
+    public void cutPizza(Integer y, Integer x) {
+        mapIngredient.put(y*maxColumn+x,null);
+    }
+
     public Integer getXpos(Integer i){
         return i%maxColumn;
     }

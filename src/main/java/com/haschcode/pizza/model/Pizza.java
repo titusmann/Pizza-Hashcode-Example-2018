@@ -53,11 +53,12 @@ public class Pizza {
     }
 
     public Boolean getIngredient(Integer y, Integer x) {
-        return mapIngredient.get(y*maxColumn+x);
+        return mapIngredient.containsKey(y*maxColumn+x)?mapIngredient.get(y*maxColumn+x):null;
     }
 
     public void cutPizza(Integer y, Integer x) {
-        mapIngredient.put(y*maxColumn+x,null);
+        mapIngredient.remove(y*maxColumn+x);
+        //mapIngredient.put(y*maxColumn+x,null);
     }
 
     public Integer getXpos(Integer i){

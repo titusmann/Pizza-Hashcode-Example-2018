@@ -49,7 +49,7 @@ public class Main {
         do {
             int menorPeso = 1000;
             posMenorPeso = -1;
-            for (int i = 0; i < size; i++) {
+            for (Integer i : pizza.getMapIngredient().keySet()) {
                 Integer weight = weightOfCell(i);
                 weightCells.put(i, weight);
                 if (weight < menorPeso && weight > 0) {
@@ -76,11 +76,11 @@ public class Main {
         } while (posMenorPeso != -1);
 
 
-        try {
-            WriteFile.imprimeCortes(slices);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            WriteFile.imprimeCortes(slices);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -162,6 +162,15 @@ public class Main {
                         for(int y2 = coory-y; y2 <= coory-y+(avancey-1); y2++ ){
                             pizza.cutPizza(y2,x2);
 
+                        }
+                    }
+
+                    if(contador.get()%50==0) {
+                        try {
+                            WriteFile.imprimeCortes(slices);
+                            slices.clear();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
                 }

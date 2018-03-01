@@ -2,6 +2,7 @@ package com.haschcode.pizza.model;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Pizza {
 
@@ -13,6 +14,8 @@ public class Pizza {
     private HashMap<Integer, Boolean> mapIngredient;
 
     private HashMap<Integer, Integer> weightOfCells;
+
+    private Map<Integer, Integer> weigthOfCellsSorted;
 
     private List<Slice> sliceList;
 
@@ -86,5 +89,13 @@ public class Pizza {
 
     public void setWeightOfCells(HashMap<Integer, Integer> weightOfCells) {
         this.weightOfCells = weightOfCells;
+    }
+
+    public Map<Integer, Integer> getWeigthOfCellsSorted() {
+        return weigthOfCellsSorted;
+    }
+
+    public void setWeigthOfCellsSorted(Map<Integer, Integer> weigthOfCellsSorted) {
+        this.weigthOfCellsSorted = weigthOfCellsSorted;
     }
 }

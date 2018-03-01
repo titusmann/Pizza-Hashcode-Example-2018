@@ -6,6 +6,7 @@ import com.haschcode.pizza.model.Slice;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static com.haschcode.pizza.Main.calcularCortes;
 
@@ -44,43 +45,56 @@ public class Main {
         //System.out.println(pizza.toString());
         HashMap<Integer, Integer> weightCells = new HashMap<>();
 
-        long size = pizza.getMapIngredient().size();
-        int posMenorPeso = -1;
-        do {
-            int menorPeso = 1000;
-            posMenorPeso = -1;
-            for (Integer i : pizza.getMapIngredient().keySet()) {
-                Integer weight = weightOfCell(i);
+        System.out.println("Leido el mapa. Calculando pesos.");
+        for (Integer i : pizza.getMapIngredient().keySet()) {
+            Integer weight = weightOfCell(i);
+            if(weight > 0) {
                 weightCells.put(i, weight);
-                if (weight < menorPeso && weight > 0) {
-                    menorPeso = weight;
-                    posMenorPeso = i;
-                }
-                //System.out.println(weight);
             }
-            pizza.setWeightOfCells(weightCells);
+            //System.out.println(weight);
+            if(i%1000==0){
+                System.out.println("Calculado " + i + " pesos de " + pizza.getMapIngredient().size());
+            }
+        }
+        System.out.println("Calculado pesos. Ordenamos el Array...");
 
-            // - Seleccionar la celda con menor peso.
-            // - Seleccionar el corte mas grande.
-            // - En caso de haber mas de un corte, seleccionar el corte cuya suma de pesos sea menor.
-            Integer actualSize = 0;
+        //HAY QUE DEFINIR EL SORTEDWEIGTHCELLS PARA UE SIEMPRE ESTE ORDENADO, INCLUSO AL ACTUALIZAR VALOR
+        Map<Integer, Integer> sortedWeigthCells = weightCells.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        pizza.setWeigthOfCellsSorted(sortedWeigthCells);
+
+        System.out.println("Array ordenado. Cortando.");
+
+        do {
+            boolean cortado = false;
+            //Realizamos el corte del primer trozo en el array (supuestamente, el mas necesitado)
             for (String combi : comb) {
-                Integer xmax = Integer.parseInt(combi.split("-")[0]);
-                Integer ymax = Integer.parseInt(combi.split("-")[1]);
+                if(!cortado) {
+                    Integer xmax = Integer.parseInt(combi.split("-")[0]);
+                    Integer ymax = Integer.parseInt(combi.split("-")[1]);
 
-                if (calcularCortes(xmax, ymax, pizza.getXpos(posMenorPeso), pizza.getYpos(posMenorPeso)) > 0) {
-                    //Esta combinatoria tiene cortes posibles. Se realiza el primero.
-                    realizarPrimerCorte(xmax, ymax, pizza.getXpos(posMenorPeso), pizza.getYpos(posMenorPeso));
+                    if (calcularCortes(xmax, ymax, pizza.getXpos((Integer) sortedWeigthCells.keySet().toArray()[0]), pizza.getYpos((Integer) sortedWeigthCells.keySet().toArray()[0])) > 0) {
+                        //Esta combinatoria tiene cortes posibles. Se realiza el primero.
+                        realizarPrimerCorte(xmax, ymax, pizza.getXpos((Integer) sortedWeigthCells.keySet().toArray()[0]), pizza.getYpos((Integer) sortedWeigthCells.keySet().toArray()[0]));
+                        cortado = true;
+                    }
+                    //En el Corte, actualizará también los valores de las casillas de alrededor.
                 }
             }
-        } while (posMenorPeso != -1);
+            sortedWeigthCells = pizza.getWeigthOfCellsSorted();
+            System.out.print("Quedan " + sortedWeigthCells.size() + " casillas.");
 
+        } while (sortedWeigthCells.size() > 0);
 
-//        try {
-//            WriteFile.imprimeCortes(slices);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        // TODO: Cambiar el Hashmap a un Sortmap ordenado por values.
+        // TODO: Recalcular el peso solo de las casillas a pizza.getMaxCellsSlice() de distancia de la zona recortada.
+
+        try {
+            WriteFile.imprimeCortes(slices);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -165,6 +179,21 @@ public class Main {
                         }
                     }
 
+                    //Y recalculamos los pesos para todas las casillas alrededor de esta.
+                    Map<Integer, Integer> sortedMap = pizza.getWeigthOfCellsSorted();
+                    for(int x3 = slice.getX1()-pizza.getMaxCellsSlice(); x3 <= slice.getX2()+pizza.getMaxCellsSlice(); x3++){
+                        for(int y3 = slice.getY1()-pizza.getMaxCellsSlice(); y3 <= slice.getY2()+pizza.getMaxCellsSlice(); y3++){
+                            int pesoDeCasilla = weightOfCell(y3*pizza.getMaxColumn()+x3);
+                            if (pesoDeCasilla >= 1) {
+                                sortedMap.put(y3*pizza.getMaxColumn()+x3,pesoDeCasilla);
+                            } else {
+                                sortedMap.remove(y3*pizza.getMaxColumn()+x3);
+                            }
+                        }
+                    }
+                    sortedMap = sortByValue(sortedMap);
+                    pizza.setWeigthOfCellsSorted(sortedMap);
+
                     if(contador.get()%50==0) {
                         try {
                             WriteFile.imprimeCortes(slices);
@@ -176,5 +205,17 @@ public class Main {
                 }
             }
         }
+    }
+
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+        return map.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(/*Collections.reverseOrder()*/))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 }

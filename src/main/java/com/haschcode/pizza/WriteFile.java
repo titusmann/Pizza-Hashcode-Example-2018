@@ -34,7 +34,7 @@ public class WriteFile {
     }
 
     public static void imprimeCortes(List<Slice> slices) throws FileNotFoundException, IOException {
-        String file = "C:\\Users\\fjbelaza\\Documents\\Pizza-Hashcode-Example-2018-develop\\Pizza-Hashcode-Example-2018\\src\\main\\java\\resources\\outputSmall.out";
+        String file = "C:\\Users\\fjbelaza\\Documents\\Pizza-Hashcode-Example-2018-develop\\Pizza-Hashcode-Example-2018\\src\\main\\java\\resources\\outputBig2.out";
 
         FileWriter f = new FileWriter(file,true);
         BufferedWriter b = new BufferedWriter(f);
@@ -43,7 +43,7 @@ public class WriteFile {
 
         for (Slice slice : slices) {
             b.newLine();
-            b.write(slice.getX1() + "\t" + slice.getY1() + "\t" + slice.getX2() + "\t" + slice.getY2());
+            b.write(slice.getY1() + "\t" + slice.getX1() + "\t" + slice.getY2() + "\t" + slice.getX2());
         }
         b.close();
     }
